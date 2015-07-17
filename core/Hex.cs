@@ -139,9 +139,9 @@ namespace Hex1.core
 
         public static Hex Round(FractionalHex Fhex)
         {
-            short q = (short)Math.Truncate(Fhex.q);
-            short r = (short)Math.Truncate(Fhex.r);
-            short s = (short)Math.Truncate(Fhex.s);
+            short q = (short)Math.Round(Fhex.q);
+            short r = (short)Math.Round(Fhex.r);
+            short s = (short)Math.Round(Fhex.s);
             double q_diff = Math.Abs((double)q - Fhex.q);
             double r_diff = Math.Abs((double)r - Fhex.r);
             double s_diff = Math.Abs((double)s - Fhex.s);

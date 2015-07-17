@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace Hex1.core
 {
@@ -49,7 +50,7 @@ namespace Hex1.core
 
         public void Generate()
         {
-            short q_, r_;
+            short q_, r_, s_;
 
             switch (_shape)
             {
@@ -59,8 +60,9 @@ namespace Hex1.core
                         short X_offset = (short)(X >> 1);
                         for (short Y = (short)(-X_offset); Y < width - X_offset; Y++)
                         {
-                            q_ = X;
-                            r_ = Y;
+
+                            q_ = mapLayout._Orientation.type == OrientationType.PointyTop ? Y : X;
+                            r_ = mapLayout._Orientation.type == OrientationType.PointyTop ? X : Y;
                             InsertCell(q_, r_);
                         }
                     }
@@ -91,9 +93,13 @@ namespace Hex1.core
                         case OrientationType.FlatTop:
                             for (short q = 0; q <= maxsize; q++)
                             {
-                                for (short r = (short)(maxsize - q); r <= maxsize; r++)
+                                //for (short r = (short)(maxsize - q); r <= maxsize; r++)
+                                for (short r = 0; r <= maxsize - q; r++)
                                 {
-                                    InsertCell(q, r);
+                                    q_ = q;
+                                    r_ = r;
+                                    s_ = (short)(-q - (-q - r));
+                                    InsertCell(q_, r_);
                                 }
                             }
                             break;
@@ -109,7 +115,10 @@ namespace Hex1.core
                             {
                                 for (short s = 0; s < maxsize; s++)
                                 {
-                                    InsertCell((short)(-s - r), r);
+                                    q_ = (short)(-s - r);
+                                    r_ = r;
+                                    s_ = s;
+                                    InsertCell(q_, r_);
                                 }
                             }
                             break;
@@ -136,12 +145,50 @@ namespace Hex1.core
             hexes.Add(new Hex(q, r));
         }
 
+        public bool ContainsHex(Hex hex)
+        {
+            foreach (Hex maphex in hexes)
+            {
+                if (maphex == hex)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void DrawWin(Graphics graphics)
         {
             Pen pen = new Pen(Color.Green);
+            Pen labelPen = new Pen(Color.Blue);
             foreach (Hex hex in hexes)
             {
-                graphics.DrawPolygon(pen, mapLayout.PolygonCorners(hex).ToArray());
+                List<Point> shapeDrawn = mapLayout.PolygonCorners(hex);
+                graphics.DrawPolygon(pen, shapeDrawn.ToArray());
+                //
+                Point rect_origin = shapeDrawn[0];
+                //
+                if (mapLayout._Orientation.type == OrientationType.FlatTop)
+                {
+                    rect_origin.X -= (int)(mapLayout.CellSize.X * 1.8);
+                    rect_origin.Y -= (int)(mapLayout.CellSize.Y * 0.3);
+                }
+                else
+                {
+                    rect_origin.X -= (int)(mapLayout.CellSize.X * 1.75);
+                    rect_origin.Y -= (int)(mapLayout.CellSize.Y * 0.82);
+                }
+                //
+                int fontSize = (int)(mapLayout.CellSize.X * 0.30);
+                if (fontSize > 0)
+                {
+                    Font labelFont = new Font("Arial", fontSize); //new Font(FontFamily.GenericSansSerif, fontSize);
+                    SolidBrush labelBrush = new SolidBrush(Color.Black);
+                    Rectangle rect = new Rectangle(rect_origin.X, rect_origin.Y, (int)(mapLayout.CellSize.X * 1.75), (int)(mapLayout.CellSize.Y * 0.60));
+                    StringFormat format = new StringFormat();
+                    format.Alignment = StringAlignment.Center;
+                    graphics.DrawString(string.Format("{0},{1},{2}", hex.q, hex.r, hex.s), labelFont, labelBrush, rect, format);
+                }
             }
             pen.Dispose();
         }

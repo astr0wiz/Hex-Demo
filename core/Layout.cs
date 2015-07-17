@@ -16,12 +16,12 @@ namespace Hex1.core
             get { return _orientation; }
             set { _orientation = value; }
         }
-        private PointD _size;
+        private PointD _cellSize;
 
-        public PointD Size
+        public PointD CellSize
         {
-            get { return _size; }
-            set { _size = value; }
+            get { return _cellSize; }
+            set { _cellSize = value; }
         }
         private PointD _origin;
 
@@ -34,22 +34,27 @@ namespace Hex1.core
         public Layout(Orientation orientation, PointD size, PointD origin)
         {
             _orientation = orientation;
-            _size = size;
+            _cellSize = size;
             _origin = origin;
         }
 
         public PointD HexToPixel(Hex sourceHex)
         {
-            double X = (_orientation.f0 * sourceHex.q + _orientation.f1 * sourceHex.r) * _size.X;
-            double Y = (_orientation.f2 * sourceHex.q + _orientation.f3 * sourceHex.r) * _size.Y;
+            double X = (_orientation.f0 * sourceHex.q + _orientation.f1 * sourceHex.r) * _cellSize.X;
+            double Y = (_orientation.f2 * sourceHex.q + _orientation.f3 * sourceHex.r) * _cellSize.Y;
             return new PointD(X + _origin.X, Y + _origin.Y);
+        }
+
+        public FractionalHex PixelToHex(Point point)
+        {
+            return PixelToHex(new PointD((double)point.X, (double)point.Y));
         }
 
         public FractionalHex PixelToHex(PointD point)
         {
             PointD pt;
-            pt.X = (point.X - _origin.X) / _size.X;
-            pt.Y = (point.Y - _origin.Y) / _size.Y;
+            pt.X = (point.X - _origin.X) / _cellSize.X;
+            pt.Y = (point.Y - _origin.Y) / _cellSize.Y;
             double q = _orientation.b0 * pt.X + _orientation.b1 * pt.Y;
             double r = _orientation.b2 * pt.X + _orientation.b3 * pt.Y;
             return new FractionalHex(q, r, -q - r);
@@ -67,7 +72,7 @@ namespace Hex1.core
             //
             // ***********************************************************
             //System.Diagnostics.Debug.WriteLine(string.Format("HexCornerOffset angle calculated as: {0,12:0.00000000}",angle));
-            return new PointD(_size.X * Math.Cos(angle), _size.Y * Math.Sin(angle));
+            return new PointD(_cellSize.X * Math.Cos(angle), _cellSize.Y * Math.Sin(angle));
         }
 
         public List<Point> PolygonCorners(Hex polygon)
