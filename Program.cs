@@ -25,12 +25,19 @@ namespace Hex1
             Utils.Directions.Add(new Hex(-1, 1, 0));
             Utils.Directions.Add(new Hex(0, 1, -1));
 
-            double rad = Math.PI / 180.0;
-            for (int m = 0; m < 6; m++)
-            {
-                int deg = m * 60; // + (isPointyTop ? 30 : 0);
-                Utils.Euclids.Add(deg, new Euclid(Math.Sin(deg * rad), Math.Cos(deg * rad)));
-            }
+            Utils.Euclids.Add(0, new Euclid(0.0, 1.0));
+            Utils.Euclids.Add(30, new Euclid(0.5, 0.866025403784439));
+            Utils.Euclids.Add(60, new Euclid(0.866025403784439, 0.5));
+            Utils.Euclids.Add(90, new Euclid(1.0, 0.0));
+            Utils.Euclids.Add(120, new Euclid(0.866025403784439, -0.5));
+            Utils.Euclids.Add(150, new Euclid(0.5, -0.866025403784439));
+            Utils.Euclids.Add(180, new Euclid(0.0, -1.0));
+            Utils.Euclids.Add(210, new Euclid(-0.5, -0.866025403784439));
+            Utils.Euclids.Add(240, new Euclid(-0.866025403784439, -0.5));
+            Utils.Euclids.Add(270, new Euclid(-1.0, 0.0));
+            Utils.Euclids.Add(300, new Euclid(-0.866025403784439, 0.5));
+            Utils.Euclids.Add(330, new Euclid(-0.5, 0.866025403784439));
+            Utils.Euclids.Add(360, new Euclid(0.0, 1.0));
 
 
 

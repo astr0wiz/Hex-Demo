@@ -62,7 +62,7 @@ namespace Hex1.core
 
         public PointD HexCornerOffset(int corner)
         {
-            double angle = 2.0 * Math.PI * (corner + _orientation.StartAngleFactor) / 6;
+            // Dont need this if we use Euclids : double angle = 2.0 * Math.PI * (corner + _orientation.StartAngleFactor) / 6;
             // ***********************************************************
             //
             // TODO: Since all angles here are multiples of 30, we need
@@ -72,7 +72,11 @@ namespace Hex1.core
             //
             // ***********************************************************
             //System.Diagnostics.Debug.WriteLine(string.Format("HexCornerOffset angle calculated as: {0,12:0.00000000}",angle));
-            return new PointD(_cellSize.X * Math.Cos(angle), _cellSize.Y * Math.Sin(angle));
+
+            // Using Utils.Euclids...
+
+            int angle = (corner * 60) + Convert.ToInt32(_orientation.StartAngleFactor * 60);
+            return new PointD(_cellSize.X * Utils.Euclids[angle].Cos, _cellSize.Y * Utils.Euclids[angle].Sin);
         }
 
         public List<Point> PolygonCorners(Hex polygon)
